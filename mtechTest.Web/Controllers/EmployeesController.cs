@@ -20,7 +20,7 @@ namespace mtechTest.Web.Controllers
             var employees = from employee in db.Employees
                             select employee;
 
-            if(!string.IsNullOrEmpty(searchName))
+            if (!string.IsNullOrEmpty(searchName))
             {
                 employees = employees.Where(emp => emp.Name.Contains(searchName));
             }
@@ -28,13 +28,19 @@ namespace mtechTest.Web.Controllers
             return View(employees);
         }
 
-        public ActionResult SortByDOB()
+        public ActionResult SortByDOB(string searchName)
         {
             var employees = from employee in db.Employees
-                            orderby employee.BornDate
                             select employee;
 
-           return View(employees);
+            if (!string.IsNullOrEmpty(searchName))
+            {
+                employees = employees.Where(emp => emp.Name.Contains(searchName));
+            }
+
+            employees = employees.OrderBy(emp => emp.BornDate);
+
+            return View(employees);
         }
 
         public ActionResult Details(int? id)
@@ -62,9 +68,10 @@ namespace mtechTest.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (db.Employees.Count(emp => emp.RFC.ToUpper() == employee.RFC.ToUpper()) == 0)
+                employee.RFC = employee.RFC.ToUpper();
+
+                if (employee.RFC == "XAXX010101000" || db.Employees.Count(emp => emp.RFC == employee.RFC) == 0)
                 {
-                    employee.RFC = employee.RFC.ToUpper();
                     db.Employees.Add(employee);
                     db.SaveChanges();
                     return RedirectToAction("Index");
@@ -97,8 +104,11 @@ namespace mtechTest.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (db.Employees.Count(emp => emp.RFC.ToUpper() == employee.RFC.ToUpper() && emp.Id != employee.Id) == 0)
+                employee.RFC = employee.RFC.ToUpper();
+
+                if (employee.RFC == "XAXX010101000" || db.Employees.Count(emp => emp.RFC == employee.RFC && emp.Id != employee.Id) == 0)
                 {
+                    
                     db.Entry(employee).State = EntityState.Modified;
                     db.SaveChanges();
                     return RedirectToAction("Index");
