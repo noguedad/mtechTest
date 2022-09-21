@@ -81,7 +81,7 @@ namespace mtechTest.Windows
                         current.BornDate = eBornDate.Value;
                         current.Status = (EmployeeStatus)eStatus.SelectedIndex;
                         employeeBS.ResetCurrentItem();
-                        
+                        _context.SaveChanges();
                            
                         endModify();
                     }
